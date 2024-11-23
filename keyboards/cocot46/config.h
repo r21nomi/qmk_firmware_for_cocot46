@@ -50,9 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ENCODERS_PAD_B { C6 }
 #define ENCODER_RESOLUTION 4
 
-
-#define TAPPING_FORCE_HOLD
-#define TAPPING_TERM 200
+#define PREVENT_STUCK_MODIFIERS
+#define TAPPING_TERM 140
+// #define QUICK_TAP_TERM 0
+#define HOLD_ON_OTHER_KEY_PRESS
 
 #define RGB_DI_PIN D3
 #ifdef RGBLIGHT_ENABLE

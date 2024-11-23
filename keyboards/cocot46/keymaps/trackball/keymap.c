@@ -19,8 +19,18 @@
 
 #include "paw3204.h"
 #include "pointing_device.h"
+#include "keymap_jp.h"
 
 bool isScrollMode;
+
+/*
+ * [Compile]
+ * qmk compile -kb cocot46 -km trackball
+ *
+ *
+ * [Flash]
+ * Please use QMK Toolbox
+*/
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_number {
@@ -30,55 +40,102 @@ enum layer_number {
     _ADJUST = 3,
 };
 
+#define _QWERTY 0
+#define _SYMB 1
+#define _NAV 2
+#define _ADJUST 3
 
 #define LW_MHEN LT(1,KC_MHEN)  // lower
 #define RS_HENK LT(2,KC_HENK)  // raise
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    /* Base */
-    [0] = LAYOUT(
+    /* Qwerty
+         * ,-----------------------------------------.                ,-------------------------------------------.
+         * | Tab  |   Q  |   W  |   E  |   R  |   T  |                |   Y  |   U  |   I  |   O  |   P  |    \   |
+         * |------+------+------+------+------+------|                |------+------+------+------+------+--------|
+         * | Ctrl |   A  |   S  |   D  |   F  |   G  |                |   H  |   J  |   K  |   L  |   ;  |Enter/L2|
+         * |------+------+------+------+------+------|                |------+------+------+------+------+--------|
+         * |LShift|   Z  |   X  |   C  |   V  |   B  |                |   N  |   M  |   ,  |   .  |   /  | RShift |
+         * `-------------------------------------------------. ,--------------------------------------------------'
+         *                     | MHEN/alt | Del/L1 | Ecs/Cmd | | spc/L2 | Bsp/L1 | HENK |
+         *                     `-----------------------------' `------------------------'
+         */
+    [_QWERTY] = LAYOUT(
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                                              KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_BSPC,
+LT(_ADJUST, KC_TAB), KC_Q, KC_W,    KC_E,    KC_R,    KC_T,                                              KC_Y, KC_U, KC_I,    KC_O,   KC_P,    LT(_ADJUST, KC_BSLS),
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-      KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                                              KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+      KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                                              KC_H, KC_J, KC_K,    KC_L,   KC_SCLN, LT(_NAV, KC_ENT),
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,   KC_MS_BTN1,               KC_MS_BTN2,      KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_MINS,
+      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,   KC_MS_BTN1,               KC_MS_BTN2,      KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-                        KC_LGUI, KC_LALT, LW_MHEN,  KC_SPC,      KC_PGUP,  KC_MS_BTN3,   KC_PGDOWN,    KC_ENT, RS_HENK, KC_BSPC,  KC_DEL
+     KC_LGUI, ALT_T(JP_MHEN), LT(_SYMB, KC_DEL), LGUI_T(KC_ESC), KC_PGUP,  KC_MS_BTN3,  KC_PGDOWN,  LT(_NAV, KC_SPC), LT(_SYMB, KC_BSPC), JP_HENK,  KC_DEL
                                                     //`-----------------------'  `-----------------------'
     ),
-    [1] = LAYOUT(
+    /* SYMBOLS
+         * ,-----------------------------------------.                ,------------------------------------------.
+         * |   '  |   !  |   @  |   {  |   }  |   |  |                |      |   7  |   8  |   9  |   +  |       |
+         * |------+------+------+------+------+------|                |------+------+------+------+------+-------|
+         * |   &  |   #  |   $  |   (  |   )  |   `  |                |      |   4  |   5  |   6  |   -  |   =   |
+         * |------+------+------+------+------+------|                |------+------+------+------+------+-------|
+         * |LShift|   %  |   ^  |   [  |   ]  |   ~  |                |   0  |   1  |   2  |   3  |   *  |RShift |
+         * `-------------------------------------------------. ,-------------------------------------------------'
+         *                                | Caps | Del | Ecs | | spc | Bsp | 0 |
+         *                                `------------------' `---------------'
+         */
+    [_SYMB] = LAYOUT(
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-       KC_ESC, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,                                           KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,
+       KC_QUOT, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE,                                           KC_TRNS, KC_7, KC_8, KC_9, KC_PLUS, KC_TRNS,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-       KC_TAB, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                           KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC, KC_COLN, KC_DQUO,
+       KC_AMPR, KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,                                            KC_TRNS, KC_4, KC_5, KC_6, KC_MINS, KC_EQL,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-      KC_LSFT,  KC_GRV, KC_TILD, KC_NUBS, KC_PIPE, XXXXXXX,   KC_MS_BTN4,               KC_MS_BTN5,    KC_EQL, KC_PLUS, KC_LABK, KC_RABK, KC_QUES, KC_UNDS,
+      KC_LSFT, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD,   KC_MS_BTN4,               KC_MS_BTN5,    KC_0,    KC_1, KC_2, KC_3, KC_ASTR, KC_RSFT,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-                        KC_LGUI, KC_LALT, KC_TRNS,  KC_SPC,      KC_PGUP,  KC_MS_BTN3,   KC_PGDOWN,    KC_ENT,   TT(3), KC_BSPC,  KC_DEL
+                        KC_LGUI, JP_CAPS, KC_DEL,   KC_ESC,      KC_PGUP,  KC_MS_BTN3,   KC_PGDOWN,    KC_SPC,  KC_BSPC, KC_0,  KC_DEL
                                                     //`-----------------------'  `-----------------------'
     ),
-    [2] = LAYOUT(
+    /* NAVIGATION
+         * ,---------------------------------------------------.                ,------------------------------------------.
+         * |      |      |  Prev tab |   ↑  | Next tab  |      |                |      |      | MsUp |      |      |       |
+         * |------+------+-----------+------+-----------+------|                |------+------+------+------+------+-------|
+         * |      | |<-  |     ←     |   ↓  |     →     |   -> |                |      |MsLeft|MsDown|MsRght|      |       |
+         * |------+------+-----------+------+-----------+------|                |------+------+------+------+------+-------|
+         * |      |      |Prev window|PgDown|Next window|      |                |      |      |      |      |      |       |
+         * `-----------------------------------------------------------. ,-------------------------------------------------'
+         *                                      |        |      | Lclk | | Rclk |      |      |
+         *                                      `----------------------' `--------------------'
+         */
+    [_NAV] = LAYOUT(
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-       KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                                              KC_6,    KC_7,    KC_8,    KC_9,   KC_0,  KC_BSPC,
+KC_TRNS, KC_TRNS, LGUI(LSFT(KC_LCBR)), KC_UP, LGUI(LSFT(KC_RCBR)), KC_TRNS,                              KC_TRNS, KC_TRNS, KC_MS_U, KC_TRNS, KC_TRNS, KC_TRNS,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-       KC_TAB,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                                           KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, XXXXXXX, XXXXXXX,
+KC_TRNS, RCTL(KC_A), KC_LEFT,  KC_DOWN, KC_RIGHT,  RCTL(KC_E),                                           KC_TRNS, KC_MS_L, KC_MS_D, KC_MS_R, KC_TRNS, KC_TRNS,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-      KC_LSFT,   KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,   KC_MS_BTN4,               KC_MS_BTN5,   XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX,
+KC_TRNS, KC_TRNS, LCTL(KC_H), KC_PGDN, LCTL(KC_L),  KC_TRNS, KC_MS_BTN4,               KC_MS_BTN5,        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-                        KC_LGUI, KC_LALT,   TT(3),  KC_SPC,      KC_PGUP,  KC_MS_BTN3,   KC_PGDOWN,    KC_ENT, KC_TRNS, KC_BSPC,  KC_DEL
+                        KC_LGUI, KC_TRNS, KC_TRNS, KC_BTN1,      KC_PGUP,  KC_MS_BTN3,   KC_PGDOWN,    KC_BTN2, KC_SPC, KC_TRNS,  KC_DEL
                                                     //`-----------------------'  `-----------------------'
     ),
-    [3] = LAYOUT(
+    /* ---
+         * ,----------------------------------------------.                ,------------------------------------------.
+         * |   F1  |  F2  |   F3   |  F4  |   F5   |  F6  |                |  F7  |  F8  |  F9  |  F10 |  F11 |  F12  |
+         * |-------+------+--------+------+--------+------|                |------+------+------+------+------+-------|
+         * |LED_TOG|      |        |      |        |      |                |      |      |      |      |      |LED_TOG|
+         * |-------+------+--------+------+--------+------|                |------+------+------+------+------+-------|
+         * |       |      |        |      |        |      |                |      |      |      |      |      |       |
+         * `------------------------------------------------------. ,-------------------------------------------------'
+         *                     | brightness- | saturation- | Hue- | | Hue+ | saturation+ | brightness+ |
+         *                     `----------------------------------' `----------------------------------'
+         */
+    [_ADJUST] = LAYOUT(
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                           RGB_TOG,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                                           KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                           RGB_MOD,   RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,
+      RGB_TOG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                           KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RGB_TOG,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MS_BTN1,               KC_MS_BTN2,  RGB_RMOD,   RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,
+      KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,   KC_MS_BTN1,               KC_MS_BTN2,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   //|-------------------------------------------------------|                                       |-------------------------------------------------------|
-                        XXXXXXX, XXXXXXX, KC_TRNS, XXXXXXX,      KC_PGUP,  KC_MS_BTN3,   KC_PGDOWN,   XXXXXXX,   KC_TRNS, XXXXXXX, XXXXXXX
+                        XXXXXXX, RGB_VAD, RGB_SAD, RGB_HUD,      KC_PGUP,  KC_MS_BTN3,   KC_PGDOWN,   RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX
                                                     //`-----------------------'  `-----------------------'
     )
 };
