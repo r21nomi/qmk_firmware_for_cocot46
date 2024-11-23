@@ -152,22 +152,30 @@ keyevent_t encoder1_cw = {
     .pressed = false
 };
 
+// bool encoder_update_user(uint8_t index, bool clockwise) {
+//     if (index == 0) { /* First encoder */
+//         if (clockwise) {
+//             encoder1_cw.pressed = true;
+//             encoder1_cw.time = (timer_read() | 1);
+//             action_exec(encoder1_cw);
+//         } else {
+//             encoder1_ccw.pressed = true;
+//             encoder1_ccw.time = (timer_read() | 1);
+//             action_exec(encoder1_ccw);
+//         }
+//     }
+//
+//     return true;
+// }
+
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) { /* First encoder */
-        if (clockwise) {
-            encoder1_cw.pressed = true;
-            encoder1_cw.time = (timer_read() | 1);
-            action_exec(encoder1_cw);
-        } else {
-            encoder1_ccw.pressed = true;
-            encoder1_ccw.time = (timer_read() | 1);
-            action_exec(encoder1_ccw);
-        }
+    if (clockwise) {
+        tap_code(KC_MS_WH_DOWN);
+    } else {
+        tap_code(KC_MS_WH_UP);
     }
-
-    return true;
+    return false;
 }
-
 
 void matrix_init_user(void) {
     init_paw3204();
